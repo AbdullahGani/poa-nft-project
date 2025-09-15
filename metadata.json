@@ -1,0 +1,15 @@
+{
+  "name": "Blockchain 101 Seminar NFT",
+  "description": "This token certifies attendance at the Blockchain 101 seminar at VIT.",
+  "image": "bafkreibzt2bsvblu46ean6idlohpoyxdsmqf4gf7echuykjqxsvifsvcua",
+  "attributes": [
+    {
+      "trait_type": "Event",
+      "value": "Blockchain 101 Seminar"
+    },
+    {
+      "trait_type": "Date",
+      "value": "2025-09-15"
+    }
+  ]
+}
