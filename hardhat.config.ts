@@ -1,41 +1,29 @@
-import type { HardhatUserConfig } from "hardhat/config";
+// hardhat.config.ts
+
+import "@nomicfoundation/hardhat-toolbox";
+import { HardhatUserConfig } from "hardhat/config";
 import "dotenv/config";
-import "./tasks/mint";
-import hardhatToolboxMochaEthersPlugin from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
-import { configVariable } from "hardhat/config";
+
+// Check for environment variables
+const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL;
+if (!SEPOLIA_RPC_URL) {
+  throw new Error("Missing SEPOLIA_RPC_URL in .env file");
+}
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+if (!PRIVATE_KEY) {
+  throw new Error("Missing PRIVATE_KEY in .env file");
+}
 
 const config: HardhatUserConfig = {
-  plugins: [hardhatToolboxMochaEthersPlugin],
-  solidity: {
-    profiles: {
-      default: {
-        version: "0.8.28",
-      },
-      production: {
-        version: "0.8.28",
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200,
-          },
-        },
-      },
-    },
-  },
+  solidity: "0.8.24", // Or "0.8.28"
   networks: {
-    hardhatMainnet: {
-      type: "edr-simulated",
-      chainType: "l1",
-    },
-    hardhatOp: {
-      type: "edr-simulated",
-      chainType: "op",
-    },
     sepolia: {
-      type: "http",
-      chainType: "l1",
-      url: configVariable("SEPOLIA_RPC_URL"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+      // THE FIX IS HERE: Add the 'type' property
+      type: "http", 
+      url: SEPOLIA_RPC_URL,
+      accounts: [PRIVATE_KEY],
+      chainId: 11155111,
     },
   },
 };
