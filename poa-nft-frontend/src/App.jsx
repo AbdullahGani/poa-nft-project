@@ -1,10 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // <-- Import useEffect
 import { ethers } from 'ethers';
-import { contractAddress, abi } from './constants.js';
+import LandingPage from './components/LandingPage';
+import Dashboard from './components/Dashboard';
+import { Box } from '@chakra-ui/react';
 
 function App() {
   const [account, setAccount] = useState(null);
-  const [contractInfo, setContractInfo] = useState({ name: '', symbol: '' });
+  const [provider, setProvider] = useState(null);
+
+  // Function to check for an existing wallet connection
+  const checkIfWalletIsConnected = async () => {
+    if (window.ethereum) {
+      try {
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const accounts = await provider.send("eth_accounts", []);
+
+        if (accounts.length > 0) {
+          setAccount(accounts[0]);
+          setProvider(provider);
+        } else {
+          console.log("No authorized account found");
+        }
+      } catch (error) {
+        console.error("Error checking for wallet connection:", error);
+      }
+    }
+  };
+
+  // useEffect runs this function once when the component loads
+  useEffect(() => {
+    checkIfWalletIsConnected();
+  }, []);
 
   const connectWallet = async () => {
     if (window.ethereum) {
@@ -13,48 +39,25 @@ function App() {
         await provider.send("eth_requestAccounts", []);
         const signer = await provider.getSigner();
         const address = await signer.getAddress();
+        
         setAccount(address);
+        setProvider(provider);
       } catch (error) {
-        console.error("Error connecting wallet", error);
+        console.error("Error connecting wallet:", error);
       }
     } else {
-      alert("Please install MetaMask.");
-    }
-  };
-
-  const getContractInfo = async () => {
-    if (window.ethereum) {
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const contract = new ethers.Contract(contractAddress, abi, provider);
-      try {
-        const name = await contract.name();
-        const symbol = await contract.symbol();
-        setContractInfo({ name, symbol });
-      } catch (error) {
-        console.error("Error fetching contract info", error);
-      }
+      alert("Please install MetaMask!");
     }
   };
 
   return (
-    <div className="App">
-      <h1>Proof of Attendance NFT</h1>
+    <Box>
       {account ? (
-        <div>
-          <h3>Wallet Connected:</h3>
-          <p>{account}</p>
-          <button onClick={getContractInfo}>Get Contract Info</button>
-          {contractInfo.name && (
-            <div>
-              <p><strong>Contract Name:</strong> {contractInfo.name}</p>
-              <p><strong>Symbol:</strong> {contractInfo.symbol}</p>
-            </div>
-          )}
-        </div>
+        <Dashboard account={account} provider={provider} setAccount={setAccount} />
       ) : (
-        <button onClick={connectWallet}>Connect Wallet</button>
+        <LandingPage connectWallet={connectWallet} />
       )}
-    </div>
+    </Box>
   );
 }
 
