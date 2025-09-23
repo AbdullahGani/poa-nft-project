@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react'; // <-- Import useEffect
+import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import LandingPage from './components/LandingPage';
 import Dashboard from './components/Dashboard';
+import Navbar from './components/Navbar';
 import { Box } from '@chakra-ui/react';
 
 function App() {
   const [account, setAccount] = useState(null);
   const [provider, setProvider] = useState(null);
 
-  // Function to check for an existing wallet connection
   const checkIfWalletIsConnected = async () => {
+    // This function logic remains the same
     if (window.ethereum) {
       try {
         const provider = new ethers.BrowserProvider(window.ethereum);
@@ -18,8 +19,6 @@ function App() {
         if (accounts.length > 0) {
           setAccount(accounts[0]);
           setProvider(provider);
-        } else {
-          console.log("No authorized account found");
         }
       } catch (error) {
         console.error("Error checking for wallet connection:", error);
@@ -27,9 +26,9 @@ function App() {
     }
   };
 
-  // useEffect runs this function once when the component loads
+  // By commenting this out, the app will no longer auto-connect on page load.
   useEffect(() => {
-    checkIfWalletIsConnected();
+    // checkIfWalletIsConnected(); 
   }, []);
 
   const connectWallet = async () => {
@@ -52,10 +51,12 @@ function App() {
 
   return (
     <Box>
+      <Navbar account={account} connectWallet={connectWallet} setAccount={setAccount} /> 
+      
       {account ? (
-        <Dashboard account={account} provider={provider} setAccount={setAccount} />
+        <Dashboard account={account} setAccount={setAccount} />
       ) : (
-        <LandingPage connectWallet={connectWallet} />
+        <LandingPage connectWallet={connectWallet} /> 
       )}
     </Box>
   );
