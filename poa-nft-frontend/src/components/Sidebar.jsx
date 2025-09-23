@@ -1,7 +1,7 @@
 import { Box, VStack, Link, Heading } from '@chakra-ui/react';
 import { ViewIcon, CalendarIcon, SettingsIcon, AddIcon } from '@chakra-ui/icons';
 
-// The Sidebar now receives props to check for admin and to change the view
+// The Sidebar receives props to check for admin and to change the view
 function Sidebar({ isAdmin, setView }) {
   return (
     <Box
@@ -25,24 +25,22 @@ function Sidebar({ isAdmin, setView }) {
             My NFTs
           </Link>
 
-          {/* --- Links re-added below (currently placeholders) --- */}
+          {/* --- These links are now updated and functional --- */}
           <Link 
-            href="#" 
-            w="full" p={2} borderRadius="md" _hover={{ bg: 'gray.700' }} 
-            opacity={0.6} // Style to show they are not active yet
+            onClick={() => setView('events')} 
+            w="full" p={2} borderRadius="md" _hover={{ bg: 'gray.700', cursor: 'pointer' }}
           >
             <CalendarIcon mr={3} />
             Upcoming Events
           </Link>
           <Link 
-            href="#" 
-            w="full" p={2} borderRadius="md" _hover={{ bg: 'gray.700' }} 
-            opacity={0.6}
+            onClick={() => setView('profile')} 
+            w="full" p={2} borderRadius="md" _hover={{ bg: 'gray.700', cursor: 'pointer' }}
           >
             <SettingsIcon mr={3} />
             Profile
           </Link>
-          {/* --- End of re-added links --- */}
+          {/* --- End of updated links --- */}
 
           {/* This link will only appear if the connected user is the admin */}
           {isAdmin && (
